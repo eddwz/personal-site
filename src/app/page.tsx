@@ -55,6 +55,15 @@ export default function Home() {
             )}
           </li>
 
+          <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+            <span className="text-ink w-48">Weight</span>
+            {!vitals ? (
+              <span className="animate-pulse bg-rule h-4 w-16 inline-block rounded" />
+            ) : (
+              <span>{vitals.weight} lbs</span>
+            )}
+          </li>
+
         </ul>
       </section>
 
