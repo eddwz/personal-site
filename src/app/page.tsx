@@ -17,80 +17,84 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="space-y-12 pb-12">
-      <section>
-        <h1 className="font-serif text-3xl font-bold normal-case mb-4">Executive Summary</h1>
-        <div className="memo-border p-6 bg-white max-w-2xl">
-          <p className="normal-case text-base leading-relaxed text-foreground">
-            E. Zhou is a Software Engineer specializing in scalable backend infrastructure 
-            and AI-driven systems. Target environment designated as fast-paced, high-ownership 
-            startup sectors. Big Tech bureaucracy explicitly avoided.
-          </p>
-          <div className="mt-4 pt-4 memo-border-top text-xs text-primary font-bold">
-            STATUS: AVAILABLE FOR DEPLOYMENT // LOC: NYC
-          </div>
-        </div>
+    <div className="space-y-16">
+      
+      <section className="space-y-4">
+        <h1 className="font-serif text-2xl font-medium text-ink">Personal Dashboard</h1>
+        <p className="text-ink-soft leading-relaxed max-w-[60ch]">
+          I'm a Software Engineer who builds scalable backend infrastructure and AI-driven systems. 
+          I prefer fast-paced, high-ownership startup environments in NYC over Big Tech bureaucracy.
+        </p>
       </section>
+
+      <hr />
+
+      <section className="space-y-6">
+        <h2 className="font-serif text-xl font-medium text-ink">Live Context</h2>
+        <ul className="list-notebook text-ink-soft space-y-4 font-mono text-sm">
+          
+          <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+            <span className="text-ink w-48">Location</span>
+            {!weather ? (
+              <span className="animate-pulse bg-rule h-4 w-32 inline-block rounded" />
+            ) : (
+              <span>{weather.location} ({weather.localTime})</span>
+            )}
+          </li>
+          
+          <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+            <span className="text-ink w-48">Weather</span>
+            {!weather ? (
+              <span className="animate-pulse bg-rule h-4 w-24 inline-block rounded" />
+            ) : (
+              <span>{weather.temperature}°F, {weather.condition}</span>
+            )}
+          </li>
+
+          <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+            <span className="text-ink w-48">Resting Heart Rate</span>
+            {!vitals ? (
+              <span className="animate-pulse bg-rule h-4 w-16 inline-block rounded" />
+            ) : (
+              <span>{vitals.restingHeartRate} bpm</span>
+            )}
+          </li>
+
+          <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+            <span className="text-ink w-48">Sleep</span>
+            {!vitals ? (
+              <span className="animate-pulse bg-rule h-4 w-32 inline-block rounded" />
+            ) : (
+              <span>{vitals.sleepDuration} (Score: {vitals.sleepScore})</span>
+            )}
+          </li>
+
+          <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+            <span className="text-ink w-48">Steps Today</span>
+            {!vitals ? (
+              <span className="animate-pulse bg-rule h-4 w-20 inline-block rounded" />
+            ) : (
+              <span>{vitals.stepsToday.toLocaleString()}</span>
+            )}
+          </li>
+
+        </ul>
+      </section>
+
+      <hr />
 
       <section className="space-y-4">
-        <h2 className="font-bold text-lg">LIVE BIOMETRIC TELEMETRY</h2>
-        
-        <div className="memo-border">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border bg-white">
-            
-            <div className="p-4">
-              <div className="text-muted-foreground mb-2">RESTING HR</div>
-              {!vitals ? (
-                <div className="animate-pulse bg-muted h-6 w-16" />
-              ) : (
-                <div className="font-serif text-3xl font-bold normal-case">{vitals.restingHeartRate} <span className="text-sm font-sans uppercase font-normal text-muted-foreground">BPM</span></div>
-              )}
-            </div>
-
-            <div className="p-4">
-              <div className="text-muted-foreground mb-2">SLEEP DURATION / SCORE</div>
-              {!vitals ? (
-                <div className="animate-pulse bg-muted h-6 w-32" />
-              ) : (
-                <div className="font-serif text-3xl font-bold normal-case">{vitals.sleepDuration} <span className="text-sm font-sans uppercase font-normal text-muted-foreground">({vitals.sleepScore})</span></div>
-              )}
-            </div>
-
-            <div className="p-4">
-              <div className="text-muted-foreground mb-2">STEPS (24H)</div>
-              {!vitals ? (
-                <div className="animate-pulse bg-muted h-6 w-24" />
-              ) : (
-                <div className="font-serif text-3xl font-bold normal-case">{vitals.stepsToday.toLocaleString()}</div>
-              )}
-            </div>
-
-          </div>
-        </div>
+        <h2 className="font-serif text-xl font-medium text-ink">Connect</h2>
+        <p className="text-ink-soft">
+          Currently open to full-time roles in NYC.
+        </p>
+        <ul className="list-notebook text-ink-soft space-y-2">
+          <li><a href="mailto:hello@example.com">Email</a></li>
+          <li><a href="https://www.linkedin.com/in/eddiezh0u/?skipRedirect=true" target="_blank" rel="noreferrer">LinkedIn</a></li>
+          <li><a href="https://github.com/eddiezh0u" target="_blank" rel="noreferrer">GitHub</a></li>
+        </ul>
       </section>
-
-      <section className="space-y-4">
-        <h2 className="font-bold text-lg">ENVIRONMENTAL CONDITIONS</h2>
-        
-        <div className="memo-border p-4 bg-white">
-          {!weather ? (
-             <div className="animate-pulse bg-muted h-6 w-64" />
-          ) : (
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <div className="text-muted-foreground mb-1">LOCATION</div>
-                <div className="font-serif text-2xl font-bold normal-case">{weather.location}</div>
-                <div className="text-xs mt-1">{weather.localTime} {weather.timezone}</div>
-              </div>
-              <div className="text-left md:text-right">
-                <div className="text-muted-foreground mb-1">ATMOSPHERE</div>
-                <div className="font-serif text-2xl font-bold normal-case">{weather.temperature}°F</div>
-                <div className="text-xs mt-1">{weather.condition}</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+      
     </div>
   );
 }

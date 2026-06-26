@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
-import { Source_Serif_4, JetBrains_Mono } from "next/font/google";
+import { Inter, Source_Serif_4, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
 
 const sourceSerif = Source_Serif_4({
   variable: "--font-source-serif",
@@ -13,8 +18,8 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DOSSIER: E. ZHOU",
-  description: "Official Engineering Brief",
+  title: "Eddie Zhou",
+  description: "Software Engineer",
 };
 
 export default function RootLayout({
@@ -22,47 +27,32 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const currentDate = new Date().toISOString().split('T')[0];
-
   return (
     <html
       lang="en"
-      className={`${sourceSerif.variable} ${jetbrains.variable} antialiased`}
+      className={`${inter.variable} ${sourceSerif.variable} ${jetbrains.variable} antialiased`}
     >
-      <body className="min-h-screen flex flex-col uppercase text-sm tracking-wide">
+      <body className="min-h-screen flex flex-col pt-12 px-6 md:px-12 selection:bg-ink/10">
         
-        {/* Strict Memo Header */}
-        <header className="w-full max-w-4xl mx-auto px-6 pt-12 pb-6">
-          <div className="memo-border-bottom pb-4 mb-1 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-            <div>
-              <div className="font-bold text-lg mb-1">DEPARTMENT OF ENGINEERING</div>
-              <div className="text-muted-foreground">SUBJECT: DOSSIER E. ZHOU</div>
-            </div>
-            <div className="text-right">
-              <div>DATE: {currentDate}</div>
-              <div>CLASS: UNCLASSIFIED</div>
-            </div>
+        {/* Minimal Notebook Header */}
+        <header className="w-full max-w-2xl mx-auto mb-16 flex items-baseline justify-between text-sm">
+          <div className="font-serif font-bold text-lg text-ink">
+            <a href="/">Eddie.</a>
           </div>
-          <div className="memo-border-bottom pb-1 mb-8" />
-          
-          <nav className="flex space-x-8 font-bold">
-            <a href="/" className="hover:text-primary">[INDEX]</a>
-            <a href="/about" className="hover:text-primary">[BACKGROUND]</a>
-            <a href="https://www.linkedin.com/in/eddiezh0u/?skipRedirect=true" target="_blank" rel="noreferrer" className="hover:text-primary">[LINKEDIN]</a>
-            <a href="https://github.com/eddiezh0u" target="_blank" rel="noreferrer" className="hover:text-primary">[GITHUB]</a>
-            <a href="mailto:hello@example.com" className="hover:text-primary">[COMMUNICATE]</a>
+          <nav className="flex space-x-6 text-ink-soft font-medium">
+            <a href="/about" className="hover:text-ink transition-colors">About</a>
+            <a href="https://www.linkedin.com/in/eddiezh0u/?skipRedirect=true" target="_blank" rel="noreferrer" className="hover:text-ink transition-colors">LinkedIn</a>
+            <a href="https://github.com/eddiezh0u" target="_blank" rel="noreferrer" className="hover:text-ink transition-colors">GitHub</a>
           </nav>
         </header>
         
-        <main className="flex-1 px-6 max-w-4xl mx-auto w-full">
+        <main className="flex-1 w-full max-w-2xl mx-auto">
           {children}
         </main>
         
-        <footer className="w-full max-w-4xl mx-auto px-6 py-12 mt-12">
-          <div className="memo-border-top pt-4 flex justify-between items-center text-xs text-muted-foreground">
-            <span>FILE END</span>
-            <span>&copy; {new Date().getFullYear()} E. ZHOU</span>
-          </div>
+        <footer className="w-full max-w-2xl mx-auto py-12 mt-16 border-t border-rule text-ink-soft text-sm flex justify-between">
+          <span>&copy; {new Date().getFullYear()}</span>
+          <span>New York City</span>
         </footer>
       </body>
     </html>

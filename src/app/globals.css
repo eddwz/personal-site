@@ -1,48 +1,70 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #f4f4f0; /* Aged off-white paper */
-  --color-foreground: #111111; /* Stark typewriter black */
-  --color-primary: #8b0000; /* Faded crimson stamp */
-  --color-primary-foreground: #ffffff;
-  --color-muted: #e6e6e2; /* Slightly darker paper for boxes */
-  --color-muted-foreground: #444444; /* Charcoal for metadata */
-  --color-border: #111111; /* Stark black rules */
+  --color-paper: #f9f9f6;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #666666;
+  --color-rule: #e5e5e0;
   
-  --font-sans: var(--font-jetbrains); /* Use mono for data */
-  --font-serif: var(--font-source-serif); /* Use serif for prose */
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-source-serif);
+  --font-mono: var(--font-jetbrains);
 }
 
 :root {
-  --background: #f4f4f0;
-  --foreground: #111111;
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  /* Pure solid background, no gradients, no shadows */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Strict typographic utility classes */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif);
+/* Notebook Prose and Lists */
+.container-prose {
+  max-w: 68ch;
 }
 
-.memo-border {
-  border: 2px solid var(--foreground);
+.list-notebook {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.memo-border-top {
-  border-top: 2px solid var(--foreground);
+.list-notebook > li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.memo-border-bottom {
-  border-bottom: 2px solid var(--foreground);
+.list-notebook > li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--color-ink-soft);
 }
 
-/* Instant state changes only (no transitions) */
+/* Subtle transitions for links only */
+a {
+  text-decoration: none;
+  border-bottom: 1px dotted var(--color-rule);
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
 a:hover {
-  color: var(--primary);
+  color: var(--color-ink-soft);
+  border-bottom-color: var(--color-ink-soft);
+}
+
+/* Navbar links don't get the underline */
+nav a {
+  border-bottom: none;
+}
+
+hr {
+  border-color: var(--color-rule);
 }

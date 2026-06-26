@@ -1,58 +1,58 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BACKGROUND | DOSSIER E. ZHOU",
-  description: "Official Engineering Brief",
+  title: "About | Eddie Zhou",
+  description: "About me",
 };
 
 export default function About() {
   return (
-    <div className="space-y-12 pb-12">
-      <section>
-        <h1 className="font-serif text-3xl font-bold normal-case mb-6">Background Briefing</h1>
-        <div className="memo-border p-6 bg-white max-w-3xl space-y-4">
-          <p className="normal-case text-base leading-relaxed text-foreground">
-            Subject is a Computer Science student at Duke University. Demonstrated expertise 
-            in backend infrastructure, systems design, and AI/ML architectures.
+    <div className="container-prose space-y-12">
+      <section className="space-y-6">
+        <h1 className="font-serif text-3xl font-medium text-ink">About Me</h1>
+        <div className="space-y-4 text-ink-soft leading-relaxed">
+          <p>
+            I am a Computer Science student at Duke University, focused on building minimal, 
+            highly reliable backend infrastructure and AI-driven systems.
           </p>
-          <p className="normal-case text-base leading-relaxed text-foreground">
-            Previous deployments include Software Engineering Internships at <strong>Meta</strong> and <strong>ReadAI</strong>. 
-            Post-deployment analysis indicates a strong preference against standard Big Tech environments. 
-            Subject is actively seeking full-time integration with fast-paced, high-ownership startup 
-            environments in NYC. Tactical priorities include rapid iteration, modern AI tool utilization, 
-            and total ownership of complex problems.
+          <p>
+            This site is an experiment in extreme restraint. Built with Next.js, it avoids the 
+            standard portfolio tropes—no dark mode, no animations, no complex grids. Just 
+            content and live data formatted like a well-kept notebook.
           </p>
         </div>
       </section>
 
-      <section className="space-y-4">
-        <h2 className="font-bold text-lg">OPERATIONAL EXPERIENCE</h2>
-        
-        <div className="memo-border bg-white divide-y divide-border">
-          
-          <div className="p-6 flex flex-col md:flex-row gap-6">
-            <div className="md:w-1/4">
-              <div className="font-bold mb-1">ORG: META</div>
-              <div className="text-muted-foreground text-xs">ROLE: SWE INTERN</div>
-            </div>
-            <div className="md:w-3/4 normal-case text-base text-foreground">
-              Operated on large-scale backend systems. Gained hands-on experience navigating 
-              complex, high-availability architecture. Concluded deployment with a refined 
-              preference for agile, fast-moving teams.
-            </div>
-          </div>
+      <hr />
 
-          <div className="p-6 flex flex-col md:flex-row gap-6">
-            <div className="md:w-1/4">
-              <div className="font-bold mb-1">ORG: READAI</div>
-              <div className="text-muted-foreground text-xs">ROLE: SWE INTERN</div>
-            </div>
-            <div className="md:w-3/4 normal-case text-base text-foreground">
-              Contributed to shipping AI-driven features in a high-velocity environment.
-            </div>
-          </div>
-
+      <section className="space-y-6">
+        <h2 className="font-serif text-xl font-medium text-ink">Background</h2>
+        <div className="space-y-6 text-ink-soft leading-relaxed">
+          <p>
+            Previously, I worked as a Software Engineering Intern at <strong>Meta</strong> and <strong>ReadAI</strong>. 
+            While navigating large-scale, high-availability architecture was an incredible learning experience, 
+            I discovered that the traditional Big Tech environment isn't for me.
+          </p>
+          <p>
+            I am actively seeking full-time roles in fast-paced, high-ownership startup 
+            environments in NYC—places where I can move quickly, freely utilize modern AI tools, and take 
+            total ownership of complex engineering problems.
+          </p>
         </div>
+      </section>
+
+      <hr />
+
+      <section className="space-y-6">
+        <h2 className="font-serif text-xl font-medium text-ink">Contact</h2>
+        <p className="text-ink-soft">
+          If you're building a high-velocity team in NYC and need a tech-stack agnostic engineer, 
+          let's talk.
+        </p>
+        <ul className="list-notebook text-ink-soft space-y-2">
+          <li><a href="mailto:hello@example.com">Email</a></li>
+          <li><a href="https://www.linkedin.com/in/eddiezh0u/?skipRedirect=true" target="_blank" rel="noreferrer">LinkedIn</a></li>
+        </ul>
       </section>
     </div>
   );
