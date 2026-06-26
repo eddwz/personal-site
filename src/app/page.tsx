@@ -4,16 +4,11 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [vitals, setVitals] = useState<any>(null);
-  const [weather, setWeather] = useState<any>(null);
 
   useEffect(() => {
     fetch("/api/vitals")
       .then((res) => res.json())
       .then(setVitals);
-
-    fetch("/api/weather")
-      .then((res) => res.json())
-      .then(setWeather);
   }, []);
 
   return (
@@ -33,24 +28,6 @@ export default function Home() {
         <h2 className="font-serif text-xl font-medium text-ink">Live Context</h2>
         <ul className="list-notebook text-ink-soft space-y-4 font-mono text-sm">
           
-          <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-            <span className="text-ink w-48">Location</span>
-            {!weather ? (
-              <span className="animate-pulse bg-rule h-4 w-32 inline-block rounded" />
-            ) : (
-              <span>{weather.location} ({weather.localTime})</span>
-            )}
-          </li>
-          
-          <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-            <span className="text-ink w-48">Weather</span>
-            {!weather ? (
-              <span className="animate-pulse bg-rule h-4 w-24 inline-block rounded" />
-            ) : (
-              <span>{weather.temperature}°F, {weather.condition}</span>
-            )}
-          </li>
-
           <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
             <span className="text-ink w-48">Resting Heart Rate</span>
             {!vitals ? (
