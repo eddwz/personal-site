@@ -1,55 +1,48 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #ffffff;
-  --color-foreground: #0f172a; /* Slate 900 */
-  --color-primary: #3b82f6; /* Blue 500 */
+  --color-background: #f4f4f0; /* Aged off-white paper */
+  --color-foreground: #111111; /* Stark typewriter black */
+  --color-primary: #8b0000; /* Faded crimson stamp */
   --color-primary-foreground: #ffffff;
-  --color-muted: #f1f5f9; /* Slate 100 */
-  --color-muted-foreground: #64748b; /* Slate 500 */
-  --color-border: #e2e8f0; /* Slate 200 */
-  --color-card: #ffffff;
+  --color-muted: #e6e6e2; /* Slightly darker paper for boxes */
+  --color-muted-foreground: #444444; /* Charcoal for metadata */
+  --color-border: #111111; /* Stark black rules */
   
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-outfit);
+  --font-sans: var(--font-jetbrains); /* Use mono for data */
+  --font-serif: var(--font-source-serif); /* Use serif for prose */
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --background: #f4f4f0;
+  --foreground: #111111;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  /* Polished pastel gradient */
-  background-image: radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.08) 0%, rgba(168, 85, 247, 0.05) 30%, transparent 70%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  /* Pure solid background, no gradients, no shadows */
 }
 
-/* Light mode Glassmorphism / Polish */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+/* Strict typographic utility classes */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
 }
 
-.glass-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.05);
-  border-radius: 1.5rem;
-  transition: box-shadow 300ms ease, transform 300ms ease;
+.memo-border {
+  border: 2px solid var(--foreground);
 }
 
-.glass-card:hover {
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+.memo-border-top {
+  border-top: 2px solid var(--foreground);
 }
 
-/* Base link styles */
-a {
-  transition: color 150ms ease, opacity 150ms ease;
+.memo-border-bottom {
+  border-bottom: 2px solid var(--foreground);
+}
+
+/* Instant state changes only (no transitions) */
+a:hover {
+  color: var(--primary);
 }
