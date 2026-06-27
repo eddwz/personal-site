@@ -1,16 +1,6 @@
 import { NextResponse } from "next/server";
 import { hasGoogleHealth, listAllDataPoints } from "@/lib/googleHealth";
 
-function ymd(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
-
-function daysAgo(n: number) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d;
-}
-
 export const revalidate = 1800; // Cache for 30 minutes
 
 export async function GET() {
@@ -21,56 +11,70 @@ export async function GET() {
       sleepDuration: "7h 14m",
       sleepScore: 88,
       stepsToday: 12450,
-      weight: "165.2 lbs"
+      weight: "165.2 lbs",
+      timestamp: new Date().toISOString(),
+      historicalHR: [{ date: "2026-06-20", value: 55 }, { date: "2026-06-21", value: 56 }, { date: "2026-06-22", value: 58 }],
+      historicalSleep: [{ date: "2026-06-20", value: 7.2 }, { date: "2026-06-21", value: 6.8 }, { date: "2026-06-22", value: 8.1 }],
+      historicalWeight: [{ date: "2026-06-20", value: 166.5 }, { date: "2026-06-21", value: 166.0 }, { date: "2026-06-22", value: 165.2 }],
+      historicalHRV: [{ date: "2026-06-20", value: 45 }, { date: "2026-06-21", value: 48 }, { date: "2026-06-22", value: 52 }]
     });
   }
 
   try {
-    const todayYmd = ymd(new Date());
-    const weekAgoYmd = ymd(daysAgo(7));
-    
-    // 1. Fetch Resting Heart Rate (latest from last 7 days)
     let restingHeartRate = "--";
+    let sleepDuration = "--";
+    let sleepScore = "--";
+    let stepsToday = "--";
+    let weight = "--";
+    
+    let historicalHR: any[] = [];
+    let historicalSleep: any[] = [];
+    let historicalWeight: any[] = [];
+    let historicalHRV: any[] = [];
+
+    // 1. Fetch Resting Heart Rate (90 items)
     try {
-      const hrFilter = `daily_resting_heart_rate.date >= "${weekAgoYmd}"`;
-      const hrPoints = await listAllDataPoints("daily-resting-heart-rate", hrFilter);
+      const hrPoints = await listAllDataPoints("daily-resting-heart-rate", undefined, 90);
       if (hrPoints.length > 0) {
-        // Find the most recent point
         const latestHr = hrPoints[hrPoints.length - 1];
         if (latestHr.dailyRestingHeartRate?.beatsPerMinute) {
           restingHeartRate = latestHr.dailyRestingHeartRate.beatsPerMinute;
         }
+        historicalHR = hrPoints.map((pt: any) => ({
+          date: pt.dailyRestingHeartRate?.date || pt.startTime || "Unknown",
+          value: pt.dailyRestingHeartRate?.beatsPerMinute || 0
+        })).filter((pt: any) => pt.value > 0);
       }
     } catch (e) {
       console.error("HR fetch failed", e);
     }
 
-    // 2. Fetch Sleep (latest from last 7 days)
-    let sleepDuration = "--";
-    let sleepScore = "--";
+    // 2. Fetch Sleep (90 items)
     try {
-      const sleepFilter = `sleep.interval.civil_end_time >= "${weekAgoYmd}T00:00:00"`;
-      const sleepPoints = await listAllDataPoints("sleep", sleepFilter);
+      const sleepPoints = await listAllDataPoints("sleep", undefined, 90);
       if (sleepPoints.length > 0) {
-        // Find the most recent sleep session
         const latestSleep = sleepPoints[sleepPoints.length - 1];
         if (latestSleep.sleep?.summary?.minutesAsleep) {
           const minutes = parseInt(latestSleep.sleep.summary.minutesAsleep);
           const h = Math.floor(minutes / 60);
           const m = minutes % 60;
           sleepDuration = `${h}h ${m}m`;
-          // Approximate a score based on duration if none provided
           sleepScore = minutes > 420 ? "Good" : "Fair"; 
         }
+        historicalSleep = sleepPoints.map((pt: any) => {
+          const m = parseInt(pt.sleep?.summary?.minutesAsleep || "0");
+          return {
+            date: pt.sleep?.interval?.civil_end_time?.split('T')[0] || "Unknown",
+            value: Number((m / 60).toFixed(1)) // Convert to hours for charting
+          };
+        }).filter((pt: any) => pt.value > 0);
       }
     } catch (e) {
       console.error("Sleep fetch failed", e);
     }
 
-    // 3. Fetch Steps
-    let stepsToday = "--";
+    // 3. Fetch Steps (1 item for live context)
     try {
-      // The steps endpoint does not support filtering by steps.date, so we fetch the most recent point.
       const stepPoints = await listAllDataPoints("steps", undefined, 1);
       if (stepPoints.length > 0) {
         const latestSteps = stepPoints[stepPoints.length - 1];
@@ -82,22 +86,34 @@ export async function GET() {
       console.error("Steps fetch failed", e);
     }
 
-    // 4. Fetch Weight
-    let weight = "--";
+    // 4. Fetch Weight (90 items)
     try {
-      // Fetch the most recent weight point
-      const weightPoints = await listAllDataPoints("weight", undefined, 1);
+      const weightPoints = await listAllDataPoints("weight", undefined, 90);
       if (weightPoints.length > 0) {
         const latestWeight = weightPoints[0];
         if (latestWeight.weight?.value) {
-          // Assuming the value is in kg, convert to lbs for display if preferred, 
-          // or just display what we get. We'll assume the API returns lbs or kg 
-          // based on user settings, so we just display the value.
           weight = `${latestWeight.weight.value}`;
         }
+        historicalWeight = weightPoints.map((pt: any) => ({
+          date: pt.startTime?.split('T')[0] || pt.weight?.date || "Unknown",
+          value: pt.weight?.value || 0
+        })).filter((pt: any) => pt.value > 0).reverse(); 
       }
     } catch (e) {
       console.error("Weight fetch failed", e);
+    }
+
+    // 5. Fetch HRV (90 items)
+    try {
+      const hrvPoints = await listAllDataPoints("heart-rate-variability", undefined, 90);
+      if (hrvPoints.length > 0) {
+        historicalHRV = hrvPoints.map((pt: any) => ({
+          date: pt.startTime?.split('T')[0] || "Unknown",
+          value: pt.heartRateVariability?.rmssd || pt.heartRateVariability?.value || 0
+        })).filter((pt: any) => pt.value > 0).reverse();
+      }
+    } catch (e) {
+      console.error("HRV fetch failed", e);
     }
 
     return NextResponse.json({
@@ -107,6 +123,10 @@ export async function GET() {
       stepsToday,
       weight,
       timestamp: new Date().toISOString(),
+      historicalHR,
+      historicalSleep,
+      historicalWeight,
+      historicalHRV
     });
 
   } catch (error: any) {
