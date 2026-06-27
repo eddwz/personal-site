@@ -42,7 +42,6 @@ export default function RootLayout({
           <nav className="flex space-x-6 text-ink-soft font-medium">
             <a href="/about" className="hover:text-ink transition-colors">About</a>
             <a href="https://www.linkedin.com/in/eddiezh0u/?skipRedirect=true" target="_blank" rel="noreferrer" className="hover:text-ink transition-colors">LinkedIn</a>
-            <a href="https://github.com/eddiezh0u" target="_blank" rel="noreferrer" className="hover:text-ink transition-colors">GitHub</a>
           </nav>
         </header>
         
