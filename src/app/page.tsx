@@ -82,9 +82,8 @@ export default function Home() {
           Currently open to full-time roles in NYC.
         </p>
         <ul className="list-notebook text-ink-soft space-y-2">
-          <li><a href="mailto:hello@example.com">Email</a></li>
+          <li><a href="mailto:eddiezhou05@gmail.com">Email</a></li>
           <li><a href="https://www.linkedin.com/in/eddiezh0u/?skipRedirect=true" target="_blank" rel="noreferrer">LinkedIn</a></li>
-          <li><a href="https://github.com/eddiezh0u" target="_blank" rel="noreferrer">GitHub</a></li>
         </ul>
       </section>
       
