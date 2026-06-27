@@ -3,9 +3,17 @@ import { hasGoogleHealth, listAllDataPoints } from "@/lib/googleHealth";
 
 export const revalidate = 1800; // Cache for 30 minutes
 
+function parseDate(dateObj: any, fallbackStr?: string) {
+  if (dateObj?.year && dateObj?.month && dateObj?.day) {
+    return `${dateObj.year}-${String(dateObj.month).padStart(2, '0')}-${String(dateObj.day).padStart(2, '0')}`;
+  }
+  if (typeof dateObj === "string") return dateObj.split('T')[0];
+  if (fallbackStr && typeof fallbackStr === "string") return fallbackStr.split('T')[0];
+  return "Unknown";
+}
+
 export async function GET() {
   if (!hasGoogleHealth()) {
-    // Return mock data if no credentials are provided
     return NextResponse.json({
       restingHeartRate: 58,
       sleepDuration: "7h 14m",
@@ -32,7 +40,6 @@ export async function GET() {
     let historicalWeight: any[] = [];
     let historicalHRV: any[] = [];
 
-    // Run all Google Health fetches in parallel for blazing fast response times
     const [hrPoints, sleepPoints, stepPoints, weightPoints, hrvPoints] = await Promise.all([
       listAllDataPoints("daily-resting-heart-rate", undefined, 90).catch((e) => { console.error("HR error", e); return []; }),
       listAllDataPoints("sleep", undefined, 90).catch((e) => { console.error("Sleep error", e); return []; }),
@@ -48,8 +55,8 @@ export async function GET() {
         restingHeartRate = latestHr.dailyRestingHeartRate.beatsPerMinute;
       }
       historicalHR = hrPoints.map((pt: any) => ({
-        date: pt.dailyRestingHeartRate?.date || pt.startTime || "Unknown",
-        value: pt.dailyRestingHeartRate?.beatsPerMinute || 0
+        date: parseDate(pt.dailyRestingHeartRate?.date, pt.startTime),
+        value: Number(pt.dailyRestingHeartRate?.beatsPerMinute || 0)
       })).filter((pt: any) => pt.value > 0);
     }
 
@@ -66,7 +73,7 @@ export async function GET() {
       historicalSleep = sleepPoints.map((pt: any) => {
         const m = parseInt(pt.sleep?.summary?.minutesAsleep || "0");
         return {
-          date: pt.sleep?.interval?.civil_end_time?.split('T')[0] || "Unknown",
+          date: parseDate(pt.sleep?.interval?.civil_end_time),
           value: Number((m / 60).toFixed(1))
         };
       }).filter((pt: any) => pt.value > 0);
@@ -87,16 +94,16 @@ export async function GET() {
         weight = `${latestWeight.weight.value}`;
       }
       historicalWeight = weightPoints.map((pt: any) => ({
-        date: pt.startTime?.split('T')[0] || pt.weight?.date || "Unknown",
-        value: pt.weight?.value || 0
+        date: parseDate(pt.weight?.date, pt.startTime),
+        value: Number(pt.weight?.value || 0)
       })).filter((pt: any) => pt.value > 0).reverse(); 
     }
 
     // 5. Process HRV
     if (hrvPoints.length > 0) {
       historicalHRV = hrvPoints.map((pt: any) => ({
-        date: pt.startTime?.split('T')[0] || "Unknown",
-        value: pt.heartRateVariability?.rmssd || pt.heartRateVariability?.value || 0
+        date: parseDate(pt.heartRateVariability?.date, pt.startTime),
+        value: Number(pt.heartRateVariability?.rmssd || pt.heartRateVariability?.value || 0)
       })).filter((pt: any) => pt.value > 0).reverse();
     }
 

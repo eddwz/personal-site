@@ -110,21 +110,13 @@ export async function ghGet(path: string) {
 }
 
 export async function listAllDataPoints(dataTypeKebab: string, filter?: string, pageSize?: number) {
-  const out: any[] = [];
-  let pageToken: string | null = null;
-  do {
-    const params = new URLSearchParams();
-    if (filter) params.set("filter", filter);
-    if (pageSize) params.set("pageSize", String(pageSize));
-    if (pageToken) params.set("pageToken", pageToken);
-    
-    const data = await ghGet(
-      `/users/me/dataTypes/${dataTypeKebab}/dataPoints?${params.toString()}`
-    );
-    
-    if (Array.isArray(data.dataPoints)) out.push(...data.dataPoints);
-    pageToken = data.nextPageToken || null;
-  } while (pageToken);
+  const params = new URLSearchParams();
+  if (filter) params.set("filter", filter);
+  if (pageSize) params.set("pageSize", String(pageSize));
   
-  return out;
+  const data = await ghGet(
+    `/users/me/dataTypes/${dataTypeKebab}/dataPoints?${params.toString()}`
+  );
+  
+  return Array.isArray(data.dataPoints) ? data.dataPoints : [];
 }
