@@ -11,6 +11,8 @@ function daysAgo(n: number) {
   return d;
 }
 
+export const revalidate = 1800; // Cache for 30 minutes
+
 export async function GET() {
   if (!hasGoogleHealth()) {
     // Return mock data if no credentials are provided
@@ -104,7 +106,8 @@ export async function GET() {
       sleepDuration,
       sleepScore,
       stepsToday,
-      weight
+      weight,
+      timestamp: new Date().toISOString(),
     });
 
   } catch (error: any) {

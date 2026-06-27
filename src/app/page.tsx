@@ -25,7 +25,14 @@ export default function Home() {
       <hr />
 
       <section className="space-y-6">
-        <h2 className="font-serif text-xl font-medium text-ink">Live Context</h2>
+        <h2 className="font-serif text-xl font-medium text-ink flex items-baseline justify-between">
+          <span>Live Context</span>
+          {vitals && vitals.timestamp && (
+            <span className="text-xs font-sans text-ink-soft opacity-70">
+              As of {new Date(vitals.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+            </span>
+          )}
+        </h2>
         <ul className="list-notebook text-ink-soft space-y-4 font-mono text-sm">
           
           <li className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
