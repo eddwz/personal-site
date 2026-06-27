@@ -92,7 +92,6 @@ export async function ghGet(path: string) {
     fetch(`${API_BASE}${path}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-      cache: "no-store",
     });
 
   let res = await doFetch(globalAccessToken!);

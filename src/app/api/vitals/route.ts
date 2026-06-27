@@ -32,88 +32,72 @@ export async function GET() {
     let historicalWeight: any[] = [];
     let historicalHRV: any[] = [];
 
-    // 1. Fetch Resting Heart Rate (90 items)
-    try {
-      const hrPoints = await listAllDataPoints("daily-resting-heart-rate", undefined, 90);
-      if (hrPoints.length > 0) {
-        const latestHr = hrPoints[hrPoints.length - 1];
-        if (latestHr.dailyRestingHeartRate?.beatsPerMinute) {
-          restingHeartRate = latestHr.dailyRestingHeartRate.beatsPerMinute;
-        }
-        historicalHR = hrPoints.map((pt: any) => ({
-          date: pt.dailyRestingHeartRate?.date || pt.startTime || "Unknown",
-          value: pt.dailyRestingHeartRate?.beatsPerMinute || 0
-        })).filter((pt: any) => pt.value > 0);
+    // Run all Google Health fetches in parallel for blazing fast response times
+    const [hrPoints, sleepPoints, stepPoints, weightPoints, hrvPoints] = await Promise.all([
+      listAllDataPoints("daily-resting-heart-rate", undefined, 90).catch((e) => { console.error("HR error", e); return []; }),
+      listAllDataPoints("sleep", undefined, 90).catch((e) => { console.error("Sleep error", e); return []; }),
+      listAllDataPoints("steps", undefined, 1).catch((e) => { console.error("Steps error", e); return []; }),
+      listAllDataPoints("weight", undefined, 90).catch((e) => { console.error("Weight error", e); return []; }),
+      listAllDataPoints("heart-rate-variability", undefined, 90).catch((e) => { console.error("HRV error", e); return []; })
+    ]);
+
+    // 1. Process Resting Heart Rate
+    if (hrPoints.length > 0) {
+      const latestHr = hrPoints[hrPoints.length - 1];
+      if (latestHr.dailyRestingHeartRate?.beatsPerMinute) {
+        restingHeartRate = latestHr.dailyRestingHeartRate.beatsPerMinute;
       }
-    } catch (e) {
-      console.error("HR fetch failed", e);
+      historicalHR = hrPoints.map((pt: any) => ({
+        date: pt.dailyRestingHeartRate?.date || pt.startTime || "Unknown",
+        value: pt.dailyRestingHeartRate?.beatsPerMinute || 0
+      })).filter((pt: any) => pt.value > 0);
     }
 
-    // 2. Fetch Sleep (90 items)
-    try {
-      const sleepPoints = await listAllDataPoints("sleep", undefined, 90);
-      if (sleepPoints.length > 0) {
-        const latestSleep = sleepPoints[sleepPoints.length - 1];
-        if (latestSleep.sleep?.summary?.minutesAsleep) {
-          const minutes = parseInt(latestSleep.sleep.summary.minutesAsleep);
-          const h = Math.floor(minutes / 60);
-          const m = minutes % 60;
-          sleepDuration = `${h}h ${m}m`;
-          sleepScore = minutes > 420 ? "Good" : "Fair"; 
-        }
-        historicalSleep = sleepPoints.map((pt: any) => {
-          const m = parseInt(pt.sleep?.summary?.minutesAsleep || "0");
-          return {
-            date: pt.sleep?.interval?.civil_end_time?.split('T')[0] || "Unknown",
-            value: Number((m / 60).toFixed(1)) // Convert to hours for charting
-          };
-        }).filter((pt: any) => pt.value > 0);
+    // 2. Process Sleep
+    if (sleepPoints.length > 0) {
+      const latestSleep = sleepPoints[sleepPoints.length - 1];
+      if (latestSleep.sleep?.summary?.minutesAsleep) {
+        const minutes = parseInt(latestSleep.sleep.summary.minutesAsleep);
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        sleepDuration = `${h}h ${m}m`;
+        sleepScore = minutes > 420 ? "Good" : "Fair"; 
       }
-    } catch (e) {
-      console.error("Sleep fetch failed", e);
+      historicalSleep = sleepPoints.map((pt: any) => {
+        const m = parseInt(pt.sleep?.summary?.minutesAsleep || "0");
+        return {
+          date: pt.sleep?.interval?.civil_end_time?.split('T')[0] || "Unknown",
+          value: Number((m / 60).toFixed(1))
+        };
+      }).filter((pt: any) => pt.value > 0);
     }
 
-    // 3. Fetch Steps (1 item for live context)
-    try {
-      const stepPoints = await listAllDataPoints("steps", undefined, 1);
-      if (stepPoints.length > 0) {
-        const latestSteps = stepPoints[stepPoints.length - 1];
-        if (latestSteps.steps?.count) {
-          stepsToday = latestSteps.steps.count;
-        }
+    // 3. Process Steps
+    if (stepPoints.length > 0) {
+      const latestSteps = stepPoints[stepPoints.length - 1];
+      if (latestSteps.steps?.count) {
+        stepsToday = latestSteps.steps.count;
       }
-    } catch (e) {
-      console.error("Steps fetch failed", e);
     }
 
-    // 4. Fetch Weight (90 items)
-    try {
-      const weightPoints = await listAllDataPoints("weight", undefined, 90);
-      if (weightPoints.length > 0) {
-        const latestWeight = weightPoints[0];
-        if (latestWeight.weight?.value) {
-          weight = `${latestWeight.weight.value}`;
-        }
-        historicalWeight = weightPoints.map((pt: any) => ({
-          date: pt.startTime?.split('T')[0] || pt.weight?.date || "Unknown",
-          value: pt.weight?.value || 0
-        })).filter((pt: any) => pt.value > 0).reverse(); 
+    // 4. Process Weight
+    if (weightPoints.length > 0) {
+      const latestWeight = weightPoints[0];
+      if (latestWeight.weight?.value) {
+        weight = `${latestWeight.weight.value}`;
       }
-    } catch (e) {
-      console.error("Weight fetch failed", e);
+      historicalWeight = weightPoints.map((pt: any) => ({
+        date: pt.startTime?.split('T')[0] || pt.weight?.date || "Unknown",
+        value: pt.weight?.value || 0
+      })).filter((pt: any) => pt.value > 0).reverse(); 
     }
 
-    // 5. Fetch HRV (90 items)
-    try {
-      const hrvPoints = await listAllDataPoints("heart-rate-variability", undefined, 90);
-      if (hrvPoints.length > 0) {
-        historicalHRV = hrvPoints.map((pt: any) => ({
-          date: pt.startTime?.split('T')[0] || "Unknown",
-          value: pt.heartRateVariability?.rmssd || pt.heartRateVariability?.value || 0
-        })).filter((pt: any) => pt.value > 0).reverse();
-      }
-    } catch (e) {
-      console.error("HRV fetch failed", e);
+    // 5. Process HRV
+    if (hrvPoints.length > 0) {
+      historicalHRV = hrvPoints.map((pt: any) => ({
+        date: pt.startTime?.split('T')[0] || "Unknown",
+        value: pt.heartRateVariability?.rmssd || pt.heartRateVariability?.value || 0
+      })).filter((pt: any) => pt.value > 0).reverse();
     }
 
     return NextResponse.json({
