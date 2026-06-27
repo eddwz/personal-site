@@ -70,9 +70,8 @@ export async function GET() {
     // 3. Fetch Steps
     let stepsToday = "--";
     try {
-      // Assuming 'steps' is a daily summary type
-      const stepsFilter = `steps.date >= "${todayYmd}"`;
-      const stepPoints = await listAllDataPoints("steps", stepsFilter);
+      // The steps endpoint does not support filtering by steps.date, so we fetch the most recent point.
+      const stepPoints = await listAllDataPoints("steps", undefined, 1);
       if (stepPoints.length > 0) {
         const latestSteps = stepPoints[stepPoints.length - 1];
         if (latestSteps.steps?.count) {
