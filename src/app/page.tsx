@@ -99,7 +99,7 @@ export default function Home() {
           <span>Live Context</span>
           {vitals && vitals.timestamp && (
             <span className="text-xs font-sans text-ink-soft opacity-70">
-              As of {new Date(vitals.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+              As of {new Date(vitals.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
             </span>
           )}
         </h2>
