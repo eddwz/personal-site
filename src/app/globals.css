@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #f9f9f6;
-  --color-ink: #1a1a1a;
-  --color-ink-soft: #666666;
-  --color-rule: #e5e5e0;
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-rule: var(--rule);
   
   --font-sans: var(--font-inter);
   --font-serif: var(--font-source-serif);
@@ -12,8 +12,27 @@
 }
 
 :root {
-  --background: var(--color-paper);
-  --foreground: var(--color-ink);
+  /* Light Mode "Notebook" Theme */
+  --paper: #f9f9f6;
+  --ink: #1a1a1a;
+  --ink-soft: #666666;
+  --rule: #e5e5e0;
+  
+  --background: var(--paper);
+  --foreground: var(--ink);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark Mode "Premium Slate" Theme */
+    --paper: #09090b; /* zinc-950 */
+    --ink: #fafafa;   /* zinc-50 */
+    --ink-soft: #a1a1aa; /* zinc-400 */
+    --rule: #27272a;  /* zinc-800 */
+    
+    --background: var(--paper);
+    --foreground: var(--ink);
+  }
 }
 
 body {
@@ -24,7 +43,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Notebook Prose and Lists */
+/* Notebook Prose */
 .container-prose {
   max-w: 68ch;
 }
