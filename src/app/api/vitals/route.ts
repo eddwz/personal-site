@@ -48,21 +48,23 @@ export async function GET() {
       listAllDataPoints("heart-rate-variability", undefined, 90).catch((e) => { console.error("HRV error", e); return []; })
     ]);
 
+    // Google Health returns data in reverse-chronological order (index 0 is the newest).
+
     // 1. Process Resting Heart Rate
     if (hrPoints.length > 0) {
-      const latestHr = hrPoints[hrPoints.length - 1];
+      const latestHr = hrPoints[0];
       if (latestHr.dailyRestingHeartRate?.beatsPerMinute) {
         restingHeartRate = latestHr.dailyRestingHeartRate.beatsPerMinute;
       }
       historicalHR = hrPoints.map((pt: any) => ({
         date: parseDate(pt.dailyRestingHeartRate?.date, pt.startTime),
         value: Number(pt.dailyRestingHeartRate?.beatsPerMinute || 0)
-      })).filter((pt: any) => pt.value > 0);
+      })).filter((pt: any) => pt.value > 0).reverse();
     }
 
     // 2. Process Sleep
     if (sleepPoints.length > 0) {
-      const latestSleep = sleepPoints[sleepPoints.length - 1];
+      const latestSleep = sleepPoints[0];
       if (latestSleep.sleep?.summary?.minutesAsleep) {
         const minutes = parseInt(latestSleep.sleep.summary.minutesAsleep);
         const h = Math.floor(minutes / 60);
@@ -76,12 +78,12 @@ export async function GET() {
           date: parseDate(pt.sleep?.interval?.civil_end_time),
           value: Number((m / 60).toFixed(1))
         };
-      }).filter((pt: any) => pt.value > 0);
+      }).filter((pt: any) => pt.value > 0).reverse();
     }
 
     // 3. Process Steps
     if (stepPoints.length > 0) {
-      const latestSteps = stepPoints[stepPoints.length - 1];
+      const latestSteps = stepPoints[0];
       if (latestSteps.steps?.count) {
         stepsToday = latestSteps.steps.count;
       }
@@ -110,11 +112,11 @@ export async function GET() {
     // 6. Calculate the actual latest Sync Time across all metrics
     let latestSyncTime = 0;
     const allLatestPoints = [
-      hrPoints.length > 0 ? hrPoints[hrPoints.length - 1] : null,
-      sleepPoints.length > 0 ? sleepPoints[sleepPoints.length - 1] : null,
-      stepPoints.length > 0 ? stepPoints[stepPoints.length - 1] : null,
+      hrPoints.length > 0 ? hrPoints[0] : null,
+      sleepPoints.length > 0 ? sleepPoints[0] : null,
+      stepPoints.length > 0 ? stepPoints[0] : null,
       weightPoints.length > 0 ? weightPoints[0] : null,
-      hrvPoints.length > 0 ? hrvPoints[hrvPoints.length - 1] : null
+      hrvPoints.length > 0 ? hrvPoints[0] : null
     ].filter(Boolean);
 
     allLatestPoints.forEach(pt => {
