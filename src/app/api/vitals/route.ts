@@ -107,13 +107,35 @@ export async function GET() {
       })).filter((pt: any) => pt.value > 0).reverse();
     }
 
+    // 6. Calculate the actual latest Sync Time across all metrics
+    let latestSyncTime = 0;
+    const allLatestPoints = [
+      hrPoints.length > 0 ? hrPoints[hrPoints.length - 1] : null,
+      sleepPoints.length > 0 ? sleepPoints[sleepPoints.length - 1] : null,
+      stepPoints.length > 0 ? stepPoints[stepPoints.length - 1] : null,
+      weightPoints.length > 0 ? weightPoints[0] : null,
+      hrvPoints.length > 0 ? hrvPoints[hrvPoints.length - 1] : null
+    ].filter(Boolean);
+
+    allLatestPoints.forEach(pt => {
+      const timeStr = pt.endTime || pt.startTime || pt.updateTime;
+      if (timeStr) {
+        const t = new Date(timeStr).getTime();
+        if (t > latestSyncTime) {
+          latestSyncTime = t;
+        }
+      }
+    });
+
+    const finalTimestamp = latestSyncTime > 0 ? new Date(latestSyncTime).toISOString() : new Date().toISOString();
+
     return NextResponse.json({
       restingHeartRate,
       sleepDuration,
       sleepScore,
       stepsToday,
       weight,
-      timestamp: new Date().toISOString(),
+      timestamp: finalTimestamp,
       historicalHR,
       historicalSleep,
       historicalWeight,
