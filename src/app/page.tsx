@@ -100,7 +100,7 @@ export default function Home() {
       <section className="space-y-4">
         <h1 className="font-serif text-2xl font-medium text-ink">Personal Dashboard</h1>
         <p className="text-ink-soft leading-relaxed max-w-[60ch]">
-          I'm a Software Engineer who builds scalable backend infrastructure and AI-driven systems.
+          I'm a Class of 2027 Computer Science major at Duke University with a PPE certificate, currently building scalable backend infrastructure and AI-driven systems.
         </p>
       </section>
 
