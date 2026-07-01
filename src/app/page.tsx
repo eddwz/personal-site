@@ -214,6 +214,17 @@ export default function Home() {
       <hr />
 
       <section className="space-y-4">
+        <h2 className="font-serif text-xl font-medium text-ink">Projects</h2>
+        <ul className="list-notebook text-ink-soft space-y-2">
+          <li>
+            <a href="https://github.com/eddwz/catchup" target="_blank" rel="noreferrer">CatchUp 📱</a> - A frictionless social connector to stay in touch with friends.
+          </li>
+        </ul>
+      </section>
+
+      <hr />
+
+      <section className="space-y-4">
         <h2 className="font-serif text-xl font-medium text-ink">Connect</h2>
         <p className="text-ink-soft">
           Currently open to full-time roles in NYC.
