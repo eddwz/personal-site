@@ -217,7 +217,7 @@ export default function Home() {
         <h2 className="font-serif text-xl font-medium text-ink">Projects</h2>
         <ul className="list-notebook text-ink-soft space-y-2">
           <li>
-            <a href="https://github.com/eddwz/catchup" target="_blank" rel="noreferrer">CatchUp 📱</a> - A frictionless social connector to stay in touch with friends.
+            <a href="https://random-friend-picker.vercel.app/" target="_blank" rel="noreferrer">CatchUp 📱</a> - A frictionless social connector to stay in touch with friends.
           </li>
         </ul>
       </section>
